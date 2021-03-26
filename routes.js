@@ -38,10 +38,16 @@ router.get("/search", async function (req, res, next) {
   console.log(searchName)
   const customers = await Customer.search(searchName);
 
-  console.log(customers)
-
   return res.render(`customer_list.html`, { customers })
-})
+});
+
+router.get("/top", async function (req, res, next) {
+
+  const customers = await Customer.top();
+
+  return res.render(`customer_list.html`, { customers });
+});
+
 
 /** Show a customer, given their ID. */
 

@@ -96,7 +96,7 @@ class Customer {
   }
 
   static async search(customerName) {
-        console.log("we're in the search querynow")
+        
         const results = await db.query(
           `SELECT id,
                   first_name AS "firstName",
@@ -104,11 +104,28 @@ class Customer {
                   phone,
                   notes
           FROM customers
-          WHERE first_name ILIKE '%${customerName}%'
-          ORDER BY last_name, first_name`
+          WHERE first_name ILIKE '%' || $1 || '%'
+          ORDER BY last_name, first_name`,
+          [customerName]
     );
+
     return results.rows.map(c => new Customer(c));
     }
+
+  static async top() {
+    const results = await db.query(
+      `SELECT c.id,
+        first_name AS "firstName",
+        last_name  AS "lastName",
+        phone,
+        c.notes
+      FROM customers AS c JOIN reservations ON customer_id = c.id
+      GROUP BY c.id, last_name, first_name
+      ORDER BY COUNT(*) DESC
+      LIMIT 10`);
+
+    return results.rows.map(c => new Customer(c));
+  }
 }
 
 module.exports = Customer;
