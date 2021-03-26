@@ -13,7 +13,7 @@ class Reservation {
   constructor({ id, customerId, numGuests, startAt, notes }) {
     this.id = id;
     this.customerId = customerId;
-    this.numGuests = numGuests;
+    this._numGuests = numGuests;
     this.startAt = startAt;
     this.notes = notes;
   }
@@ -24,6 +24,16 @@ class Reservation {
     return moment(this.startAt).format("MMMM Do YYYY, h:mm a");
   }
 
+  get numGuests() {
+    return this._numGuests;
+  }
+
+  set numGuests(num) {
+    if (num < 1) {
+      throw new Error("Please make a reservation for 1 or more people")
+    } 
+    this._numGuests = num;
+  }
   /** given a customer id, find their reservations. */
 
   static async getReservationsForCustomer(customerId) {
@@ -34,7 +44,8 @@ class Reservation {
                   start_at AS "startAt",
                   notes AS "notes"
            FROM reservations
-           WHERE customer_id = $1`,
+           WHERE customer_id = $1
+           ORDER BY start_at ASC`,
         [customerId],
     );
 

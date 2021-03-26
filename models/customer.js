@@ -16,8 +16,6 @@ class Customer {
     this.notes = notes;
   }
 
-  /** find all customers. */
-
   static async all() {
     const results = await db.query(
           `SELECT id,
@@ -31,7 +29,7 @@ class Customer {
     return results.rows.map(c => new Customer(c));
   }
 
-  fullName() {
+  get fullName() {
     return this.firstName + " " + this.lastName;
   }
 
@@ -104,7 +102,7 @@ class Customer {
                   phone,
                   notes
           FROM customers
-          WHERE first_name ILIKE '%' || $1 || '%'
+          WHERE first_name ILIKE '%' || $1 || '%' OR last_name ILIKE '%' || $1 || '%'
           ORDER BY last_name, first_name`,
           [customerName]
     );
