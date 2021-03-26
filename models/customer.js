@@ -94,6 +94,21 @@ class Customer {
       );
     }
   }
+
+  static async search(customerName) {
+        console.log("we're in the search querynow")
+        const results = await db.query(
+          `SELECT id,
+                  first_name AS "firstName",
+                  last_name  AS "lastName",
+                  phone,
+                  notes
+          FROM customers
+          WHERE first_name ILIKE '%${customerName}%'
+          ORDER BY last_name, first_name`
+    );
+    return results.rows.map(c => new Customer(c));
+    }
 }
 
 module.exports = Customer;
